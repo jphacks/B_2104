@@ -38,6 +38,7 @@
 #### フレームワーク・ライブラリ・モジュール
 * Flask, flask-sqlalchemy（バックエンド）
 * Vue.js, ElementUI(フロントエンド)
+* Firebase（ログイン認証, ファイルストレージ）
 * axios
 * flask-restful（REST API）
 
