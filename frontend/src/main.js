@@ -12,12 +12,12 @@ Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(VModal)
 const config = {
-  apiKey: 'AIzaSyACmNZ8E20WFdDCzrw4jXJPTmRbmQ_xuSA',
-  authDomain: 'isdl-kangaroo.firebaseapp.com',
-  projectId: 'isdl-kangaroo',
-  storageBucket: 'isdl-kangaroo.appspot.com',
-  messagingSenderId: '639740489459',
-  appId: '1:639740489459:web:bd4c94def6c2feedb7d186'
+  apiKey: 
+  authDomain: 
+  projectId: 
+  storageBucket: 
+  messagingSenderId: 
+  appId: 
 }
 firebase.initializeApp(config)
 new Vue({
