@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename # ファイル名をチェックす�
 from tempfile import mkstemp
 from flask import send_from_directory # 画像のダウンロード
 import os
+import uuid
 from datetime import datetime
 
 
@@ -21,35 +22,79 @@ def getUserList():
     return jsonify(res), 200
 @api_bp.route('/spam', methods=['POST'])
 def createCard():
-
     req = request.json
-
-
-
     return jsonify(req), 200
-
 
 @api_bp.route('/design', methods=['POST'])
 def create():
+    print("create")
     json=request.json
+    # file= json['img']
+    '''
+    print(request.files)
+    file = request.files['file']
+    print(file)
+    print("aaaaaaaa")
+    filename = secure_filename(file.filename) # 危険な文字を削除（サニタイズ処理）
+    print("bbbbbbbb")
+    imgpath = os.path.join('../frontend/public/static/img/', filename)
+    
+    
+    if (len(filename) == 0):
+        fd, tempPath = mkstemp()
+        filename = os.path.basename(tempPath)
+        os.close(fd)
+    file.save(imgpath)
+    '''
+    #imgpath = os.path.join('./static/img/', filename)
+    imgpath= json[0]['imgpath']
     name = json[0]['name']
     furigana = json[0]['furigana']
     birthday = json[0]['birthday']
     birthday = datetime.strptime(birthday, '%Y-%m-%d')
     favourite = json[0]['favourite']
     skills = json[0]['skills']
+    email = json[0]['email']
+    affiliation = json[0]['affiliation']
     uID =json[0]['uID']
+
     print(uID)
-    dictionary={'imgpath': "aaa",'name':name,'furigana':furigana,'id':uID,
-                'birthday':birthday,'favourite':favourite,'skills':skills}
-    if Card.query.filter(Card.id == dictionary['id']).scalar() != None:
+    #             'name':request.form.get('name'),
+    #             'furigana':request.form.get('furigana'),
+    #             'id':request.form.get('uID'),
+    #             'birthday':request.form.get('birthday'),
+    #             'favourite':request.form.get('favorite'),
+    #             'skills':request.form.get('skills')
+    dictionary={'imgpath': imgpath,
+                'name':name,
+                'furigana':furigana,
+                'id':uID,
+                'birthday':birthday,
+                'favourite':favourite,
+                'skills':skills,
+                'email':email,
+                'card_code':str(uuid.uuid4())[0:7],
+                'affiliation':affiliation
+                 }
+
+    if Card.query.filter(Card.id == uID).scalar() != None:
         update(dictionary)
         print("update!")
     else :
         insert(dictionary)
         print("insert!")
     card = Card.query.filter(Card.id==dictionary['id']).first()
-    response_json={'name':card.name,'furigana':card.furigana,'birthday':card.birthday,'favourite':card.favourite,'skills':card.skills}
+    response_json={'name':card.name,
+                   'furigana':card.furigana,
+                   'birthday':card.birthday,
+                   'favourite':card.favourite,
+                   'skills':card.skills,
+                   'imgpath':card.imgpath,
+                   'email':card.email,
+                   'card_code':card.card_code,
+                   'affiliation':card.affiliation
+                   }
+
     return jsonify(response_json)
 
 @api_bp.route('/user_info', methods=['POST'])
@@ -57,12 +102,14 @@ def get_info():
     json=request.json
     card= Card.query.filter(Card.id==json[0]['uID']).first()
     response_json={'name':card.name,
-        'furigana':card.furigana,
-        'birthday':card.birthday,
-        'favourite':card.favourite,
-        'skills':card.skills,
-        'card_code':card.card_code
-        }
+                   'furigana':card.furigana,
+                   'birthday':card.birthday,
+                   'favourite':card.favourite,
+                   'skills':card.skills,
+                   'imgpath':card.imgpath,
+                   'email':card.email,
+                   'card_code':card.card_code,
+                   'affiliation':card.affiliation}
     return jsonify(response_json)
 
 @api_bp.route('/card_code', methods=['POST'])
@@ -129,12 +176,14 @@ def show_card():
     print(uID)
     card= Card.query.filter(Card.id==uID).first()
     respon={'name':card.name,
-        'furigana':card.furigana,
-        'birthday':card.birthday,
-        'favourite':card.favourite,
-        'skills':card.skills,
-        'card_code':card.card_code
-        }
+            'furigana':card.furigana,
+            'birthday':card.birthday,
+            'favourite':card.favourite,
+            'skills':card.skills,
+            'imgpath':card.imgpath,
+            'email':card.email,
+            'affiliation':card.affiliation,
+            'imgpath':card.imgpath}
     return jsonify(respon)
 '''
 req = request.json

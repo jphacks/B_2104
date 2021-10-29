@@ -1,7 +1,23 @@
 <template>
     <div class='create-page body-content'>
         <div class='left-block'>
-        <Card1 />
+          <div class="cardblock">
+            <div class="namecard">
+              <p class="name2">{{this.$store.state.card_name}}</p>
+              <span class="phonetic2">{{this.$store.state.card_furigana}}</span>
+
+              <div class="contact">
+                <span><i class="fas fa-school">{{this.$store.state.card_affiliation}}</i></span>
+                <span><i class="fas fa-envelope">{{this.$store.state.email}}</i></span>
+                <span><i class="fas fa-school">{{this.$store.state.birthday}}</i></span>
+                <span><i class="fas fa-heart">{{this.$store.state.card_favourite}}</i></span>
+                <span><i class="fab fa-github-square">{{this.$store.state.card_skills}}</i></span>
+              </div>
+              <div class="namecard-img1">
+                <img :src=this.url alt="顔画像" style="bottom: 13.0rem">
+              </div>
+          </div>
+        </div>
         </div>
         <div class='right-block'>
             <form  name='create_form' id='contact-form' class='form-horizontal' role='form'>
@@ -31,6 +47,16 @@
                     <input type='text' class='form-control form-category' id='skills' placeholder='SKILLS' name='skills' v-model='FORM_SKILLS' required>
                 </div>
             </div>
+            <div class='form-group'>
+                <div class='col-sm-12'>
+                    <input type='text' class='form-control form-category' id='affiliation' placeholder='AFFILIATION' name='affiliation' v-model='FORM_AFFILIATION' required>
+                </div>
+            </div>
+            <div class='form-group'>
+                <div class='col-sm-12'>
+                    <input @change="selectedFile" type="file" name="file">
+                </div>
+            </div>
                <!-- <textarea class='form-control user-detail' v-model='FORM_FAVOURITE' rows='10' placeholder='FAVOURITE' name='favourite' required style='font-family: 'Yu Gothic medium', '游ゴシック Medium', Yugothic, '游ゴシック体', 'ヒラギノ角 Pro W3', sans-serif;'></textarea>-->
                 <a class='button registor' @click='Create' >登録</a>
             </form>
@@ -40,53 +66,61 @@
 
 <script>
 import axios from 'axios'
-import Card1 from './card1'
+// import Card1 from './card1'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/storage'
 
 export default {
-  components: { Card1 },
+  // components: { Card1 },
   name: 'Create',
   data () {
     return {
-      CARD_NAME: '',
-      CARD_FURIGANA: '',
-      CARD_BIRTHDAY: '',
-      CARD_FAVOURITE: '',
-      CARD_SKILLS: '',
+      uploadFile: '',
       FORM_NAME: '',
       FORM_FURIGANA: '',
       FORM_BIRTHDAY: '',
       FORM_FAVOURITE: '',
       FORM_SKILLS: '',
+      FORM_AFFILIATION: '',
+      imgname: '',
+      url: '',
       myresponse: ''
     }
   },
   methods: {
-    Create: function () {
-      console.log(this.FORM_BIRTHDAY)
+    Create: async function () {
       var detail = [{
-        img: '../images/hakase.jpg',
+        imgpath: this.imgname,
         name: this.FORM_NAME,
         furigana: this.FORM_FURIGANA,
         birthday: this.FORM_BIRTHDAY,
         favourite: this.FORM_FAVOURITE,
         skills: this.FORM_SKILLS,
-        card_code: this.$store.state.card_code,
+        email: this.$store.state.card_email,
+        affiliation: this.FORM_AFFILIATION,
         uID: this.$store.state.uID
       }]
       console.log(detail)
-      axios.post('http://127.0.0.1:5000/api/design', detail).then(response => {
-        console.log(response.data)
-        console.log(response.data.name)
-        console.log(response.data.furigana)
+      // Firebase上のストレージに保存
+      const storageRef = await firebase.storage().ref('images/' + this.imgname)
+      await storageRef.put(this.uploadFile).then(() => {
+        console.log('uploaded ' + this.imgname)
+      })
+
+      await axios.post('http://127.0.0.1:5000/api/design', detail).then(response => {
         this.$store.dispatch('createCard', {
           card_name: response.data.name,
+          card_imgpath: response.data.imgpath,
           card_furigana: response.data.furigana,
           card_birthday: response.data.birthday,
           card_favourite: response.data.favourite,
           card_skills: response.data.skills,
+          card_email: response.data.email,
+          card_affiliation: response.data.affiliation,
+          card_code: response.data.card_code,
           uID: this.$store.state.uID
         })
-        console.log(this.$store.state)
+        console.log(response.data)
         this.CARD_NAME = response.data.name
         this.CARD_FURIGANA = response.data.furigana
         this.CARD_BIRTHDAY = response.data.birthday
@@ -97,24 +131,42 @@ export default {
         this.FORM_BIRTHDAY = ''
         this.FORM_FAVOURITE = ''
         this.FORM_SKILLS = ''
+        this.FORM_EMAIL = ''
+        this.FORM_AFFILIATION = ''
+        console.log(this.url)
       }).catch(err => {
         console.log(err)
       })
+
+      const storageRef2 = await firebase.storage().ref('images/' + this.$store.state.card_imgpath)
+      await storageRef2.getDownloadURL().then(url => {
+        console.log(url)
+        this.url = url
+        console.log(this.url)
+      })
+    },
+    selectedFile: function (e) {
+      e.preventDefault()
+      this.uploadFile = e.target.files[0]
+      console.log(e.target.files[0].type)
+      console.log(String(e.target.files[0].type).slice(6))
+      this.imgname = this.$store.state.uID + '.' + String(e.target.files[0].type).slice(6)
+      console.log(this.imgname)
     }
   },
   created () {
-    this.CARD_NAME = this.$store.state.card_name
-    this.CARD_FURIGANA = this.$store.state.card_furigana
-    this.CARD_BIRTHDAY = this.$store.state.card_birthday
-    this.CARD_FAVOURITE = this.$store.state.card_favourite
-    this.CARD_SKILLS = this.$store.state.card_skills
+    const storageRef3 = firebase.storage().ref('images/' + this.$store.state.card_imgpath)
+    storageRef3.getDownloadURL().then(url => {
+      console.log(url)
+      this.url = url
+      console.log(this.url)
+    })
   }
 }
 </script>
 
 <style>
 .registor{
-    position:absolute;
     left:210px
 }
 .create-page{

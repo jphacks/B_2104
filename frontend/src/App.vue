@@ -33,7 +33,16 @@ export default {
   methods: {
     logout: function () {
       firebase.auth().signOut().then(() => {
-        this.$store.dispatch('createCard', { card_name: '', card_furigana: '', card_birthday: '', card_favourite: '', card_skills: '', uID: '' })
+        this.$store.dispatch('createCard', {
+          card_name: '',
+          card_furigana: '',
+          card_birthday: '',
+          card_favourite: '',
+          card_skills: '',
+          card_affiliation: '',
+          card_email: '',
+          uID: ''
+        })
         alert('ログアウトしました')
         this.$router.push('/')
       })

@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import unique
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from sqlalchemy import ForeignKey
@@ -13,7 +14,9 @@ class Card(db.Model):
     birthday = db.Column(db.DateTime, nullable=True)
     favourite = db.Column(db.String(30), nullable=True)
     skills = db.Column(db.String(30), nullable=True)
-    card_code = db.Column(db.String(30), nullable=True)
+    email = db.Column(db.String(50), nullable=True)
+    affiliation = db.Column(db.String(30), nullable=True)
+    card_code = db.Column(db.String(10), unique=True)
 
     #gallerys = relationship("Gallery", backref="cards")
 class Gallery(db.Model):
@@ -34,11 +37,14 @@ def get_all():
 def insert(dictionary):
     card = Card(imgpath=dictionary['imgpath'],
                 name=dictionary['name'],
-                id=dictionary['id']['uID'],
+                id=dictionary['id'],
                 furigana=dictionary['furigana'],
                 birthday=dictionary['birthday'] ,
                 favourite=dictionary['favourite'],
-                skills=dictionary['skills'])
+                skills=dictionary['skills'],
+                email=dictionary['email'],
+                card_code=dictionary['card_code'],
+                affiliation=dictionary['affiliation'])
     db.session.add(card)
     db.session.commit()
 
@@ -50,6 +56,8 @@ def update(dictionary):
     newcard.birthday=dictionary['birthday']
     newcard.favourite=dictionary['favourite']
     newcard.skills=dictionary['skills']
+    newcard.email=dictionary['email']
+    newcard.affiliation=dictionary['affiliation']
     # newcard.update({
     # 'imgpath':dictionary['imgpath'],
     # 'name':dictionary['name'],
@@ -73,10 +81,12 @@ def print_card(id):
     return user_info
 
 def addGallery(dictionary):
+    print('start')
+    print(dictionary['card_code'])
     user_card=Card.query.filter(Card.card_code==dictionary['card_code']).first()
     addID=user_card.id
     print(dictionary['id'])
-    addcard=Gallery(id=dictionary['id']['uID'],
+    addcard=Gallery(id=dictionary['id'],
                     store_id=addID)
     db.session.add(addcard)
     db.session.commit()

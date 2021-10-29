@@ -1,8 +1,27 @@
 <template>
-    <div id="app" class="container">
-        <input type='text' class='form-control form-category' id='name' placeholder='NAME' name='name' v-model='card_code'>
-        <a class='button registor' @click='addcard' >追加</a>
+<div>
+  <div class="point-box">
+    <div class="point-title">自分のID</div>
+    <div class="boxContainer">
+      <div class="box"><img class="logo" src="../images/ユーザ.png" alt="ユーザ画像"></div>
+      <div class="box">{{this.$store.state.card_code}}</div>
     </div>
+  </div>
+  <div class="point-box">
+    <div class="point-title">相手のIDを入力してください</div>
+      <div class="boxContainer">
+        <div class="box"><img class="logo" src="../images/フレンド.png" alt="フレンド追加画像"></div>
+        <div class="box">
+          <form  name="contact-form">
+            <input type="text" v-model='card_code' placeholder="ID">
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="boxContainer2">
+      <a class="button3" @click='addcard'>Serch</a>
+    </div>
+</div>
 </template>
 
 <script>

@@ -25,7 +25,7 @@ export default {
       firebase.auth().createUserWithEmailAndPassword(this.username, this.password)
         .then(user => {
           alert('Create account: ', user.email)
-          this.$store.dispatch('authuID', { uID: firebase.auth().currentUser.uid })
+          this.$store.dispatch('authuID', { uID: firebase.auth().currentUser.uid, email: firebase.auth().currentUser.email })
           this.$router.push('/')
         })
         .catch(error => {

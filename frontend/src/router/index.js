@@ -9,6 +9,7 @@ import addcard from '../views/addcard.vue'
 import Gallery from '../views/Gallery.vue'
 import Showcard from '../views/Showcard.vue'
 import firebase from 'firebase/compat/app'
+import Card1 from '../views/card1.vue'
 import 'firebase/compat/auth'
 Vue.use(Router)
 
@@ -38,6 +39,11 @@ const routes = [
     path: '/signin',
     name: 'Signin',
     component: Signin
+  },
+  {
+    path: '/card1',
+    name: 'Card1',
+    component: Card1
   },
   {
     path: '/addcard',
