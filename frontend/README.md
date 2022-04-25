@@ -27,7 +27,7 @@ git remote add origin https://github.com/{user}/{repository_name}.git
 git branch -m
 ステータス確認
 git status
-ローカルでリモートのbranchの更新を確認？
+ローカルでリモートのbranchの更新を確認
 git fetch
 ```
 ### Vueについて
