@@ -1,6 +1,7 @@
 # Nameca
 
 [![IMAGE ALT TEXT HERE](https://jphacks.com/wp-content/uploads/2021/07/JPHACKS2021_ogp.jpg)](https://www.youtube.com/watch?v=LUPQFB4QyVo)
+![図1](https://user-images.githubusercontent.com/88275508/165099779-d7ed2537-c887-4fda-9817-b7ce1f70b50d.png)
 
 ## 製品概要
 オンライン上で，名刺の作成および交換が完結するカジュアルな名刺交換Webアプリです．
